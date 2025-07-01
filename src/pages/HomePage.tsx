@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Building2, Calculator, TrendingUp, Users } from 'lucide-react';
+import { Header } from '../components/Header';
 import { SearchBar } from '../components/SearchBar';
 import { FilterPanel } from '../components/FilterPanel';
 import { ComparisonTable } from '../components/ComparisonTable';
@@ -88,18 +89,17 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <Header />
+
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              <Building2 className="w-10 h-10 text-blue-600 mr-3" />
-              <h1 className="text-3xl font-bold text-gray-900">
-                Bangladesh Bank Charges Comparison
-              </h1>
-            </div>
-            <p className="text-lg text-gray-600 mb-8">
-              Compare banking fees across all major banks in Bangladesh
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Find the Best Banking Deals in Bangladesh
+            </h1>
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Compare fees, charges, and features across all major banks. Make informed decisions and save money on your banking needs.
             </p>
             
             <SearchBar
@@ -107,6 +107,10 @@ export const HomePage: React.FC = () => {
               onSearchChange={handleSearchChange}
               placeholder="Search banks (e.g., Dutch Bangla, BRAC, Islami Bank)..."
             />
+
+            <div className="mt-8 text-sm text-blue-100">
+              <p>✓ {bangladeshiBanks.length}+ Banks • ✓ Real-time Data • ✓ All Account Types</p>
+            </div>
           </div>
         </div>
       </div>
@@ -116,7 +120,7 @@ export const HomePage: React.FC = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard
-            title="Banks Found"
+            title="Account Options"
             value={stats.totalBanks.toString()}
             icon={Building2}
             color="blue"

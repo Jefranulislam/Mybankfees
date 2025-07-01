@@ -45,18 +45,35 @@ export type AccountType =
   | 'Senior Citizen' 
   | 'Joint'
   | 'Fixed Deposit'
+  | 'FDR'
+  | 'SND'
+  | 'DPS'
   | 'Salary'
   | 'NRB'
   | 'Foreign Currency'
   | 'Islamic Savings'
-  | 'Islamic Current';
+  | 'Islamic Current'
+  | 'Mudaraba Savings'
+  | 'Al-Wadiah Current'
+  | 'Mudaraba Term Deposit'
+  | 'Hajj Account'
+  | 'Women Account'
+  | 'Premium Banking'
+  | 'SME Account'
+  | 'Corporate Account'
+  | 'Payroll Account'
+  | 'Pension Scheme'
+  | 'Expatriate Account';
 
 export type BankType = 
   | 'State-Owned Commercial Bank'
   | 'Specialized Development Bank'
   | 'Private Commercial Bank'
   | 'Islamic Bank'
-  | 'Foreign Commercial Bank';
+  | 'Foreign Commercial Bank'
+  | 'State-Owned'
+  | 'Specialized'
+  | 'Private Conventional';
 
 export interface FilterOptions {
   accountTypes: AccountType[];
