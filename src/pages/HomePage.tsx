@@ -116,59 +116,64 @@ export const HomePage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatsCard
-            title="Account Options"
-            value={stats.totalBanks.toString()}
-            icon={Building2}
-            color="blue"
-          />
-          <StatsCard
-            title="Avg Min Balance"
-            value={formatCurrency(stats.avgMinBalance)}
-            icon={Calculator}
-            color="green"
-          />
-          <StatsCard
-            title="Avg Monthly Fee"
-            value={formatCurrency(stats.avgMonthlyFee)}
-            icon={TrendingUp}
-            color="orange"
-          />
-          <StatsCard
-            title="Lowest Monthly Fee"
-            value={formatCurrency(stats.lowestMonthlyFee)}
-            icon={Users}
-            color="purple"
-          />
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <StatsCard
+              title="Account Options"
+              value={stats.totalBanks.toString()}
+              icon={Building2}
+              color="blue"
+            />
+            <StatsCard
+              title="Avg Min Balance"
+              value={formatCurrency(stats.avgMinBalance)}
+              icon={Calculator}
+              color="green"
+            />
+            <StatsCard
+              title="Avg Monthly Fee"
+              value={formatCurrency(stats.avgMonthlyFee)}
+              icon={TrendingUp}
+              color="orange"
+            />
+            <StatsCard
+              title="Lowest Monthly Fee"
+              value={formatCurrency(stats.lowestMonthlyFee)}
+              icon={Users}
+              color="purple"
+            />
+          </div>
+
+          {/* Filters */}
+          <div className="mb-8">
+            <FilterPanel
+              filters={filters}
+              onFiltersChange={setFilters}
+              isOpen={isFilterOpen}
+              onToggle={() => setIsFilterOpen(!isFilterOpen)}
+            />
+          </div>
+
+          {/* Results */}
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              Comparison Results
+            </h2>
+            <p className="text-gray-600">
+              Showing {filteredBanks.length} of {calculatedBanks.length} bank accounts
+            </p>
+          </div>
         </div>
 
-        {/* Filters */}
-        <div className="mb-8">
-          <FilterPanel
-            filters={filters}
-            onFiltersChange={setFilters}
-            isOpen={isFilterOpen}
-            onToggle={() => setIsFilterOpen(!isFilterOpen)}
-          />
+        {/* Table with full width */}
+        <div className="w-full">
+          <ComparisonTable banks={filteredBanks} />
         </div>
-
-        {/* Results */}
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Comparison Results
-          </h2>
-          <p className="text-gray-600">
-            Showing {filteredBanks.length} of {calculatedBanks.length} bank accounts
-          </p>
-        </div>
-
-        <ComparisonTable banks={filteredBanks} />
 
         {/* Footer */}
-        <div className="mt-12 text-center text-gray-500 text-sm">
+        <div className="max-w-7xl mx-auto mt-12 text-center text-gray-500 text-sm">
           <p>
             * Charges are based on typical usage patterns and may vary. 
             Monthly totals include estimated usage of ATM, transfer, and other services.

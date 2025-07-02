@@ -61,146 +61,154 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ banks }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200">
+      {/* Table container with proper overflow handling */}
       <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Compare
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort('bankName')}
-                  className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
-                >
-                  <span>Bank Name</span>
-                  <SortIcon column="bankName" />
-                </button>
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Account Type
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort('minimumBalance')}
-                  className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
-                >
-                  <span>Min Balance</span>
-                  <SortIcon column="minimumBalance" />
-                </button>
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Monthly Fee
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                ATM Fees
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Card Fees
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Transfer Fees
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort('monthlyTotal')}
-                  className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
-                >
-                  <span>Monthly Total</span>
-                  <SortIcon column="monthlyTotal" />
-                  <CalculationTooltip />
-                </button>
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <button
-                  onClick={() => handleSort('yearlyTotal')}
-                  className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
-                >
-                  <span>Yearly Total</span>
-                  <SortIcon column="yearlyTotal" />
-                </button>
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {sortedBanks.map((bank, index) => (
-              <tr key={`${bank.bankId}-${bank.type}`} className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <CompareButton
-                    selectedBanks={selectedBanks}
-                    onCompare={handleCompare}
-                    onToggleSelect={handleToggleSelect}
-                    bankId={bank.bankId}
-                    isSelected={selectedBanks.includes(bank.bankId)}
-                  />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Building2 className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{bank.bankName}</div>
-                      <div className="text-xs text-gray-500">{bank.bankType}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                    {bank.type}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {formatCurrency(bank.minimumBalance)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {formatCurrency(bank.accountMaintenanceFee)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="space-y-1">
-                    <div>Own: {formatCurrency(bank.atmFeeOwn)}</div>
-                    <div>Other: {formatCurrency(bank.atmFeeOther)}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="space-y-1">
-                    <div>Debit: {formatCurrency(bank.debitCardFee)}</div>
-                    <div>Credit: {formatCurrency(bank.creditCardFee)}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <div className="space-y-1">
-                    <div>NEFT: {formatCurrency(bank.neftFee)}</div>
-                    <div>BEFTN: {formatCurrency(bank.beftnFee)}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-lg font-bold text-green-600">
-                    {formatCurrency(bank.monthlyTotal)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-lg font-bold text-blue-600">
-                    {formatCurrency(bank.yearlyTotal)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+        <div className="min-w-[1400px]"> {/* Ensure minimum width for all content */}
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                  Compare
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
                   <button
-                    onClick={() => handleViewBank(bank.bankId)}
-                    className="flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+                    onClick={() => handleSort('bankName')}
+                    className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
                   >
-                    <Eye className="w-4 h-4 mr-1" />
-                    View Details
+                    <span>Bank Name</span>
+                    <SortIcon column="bankName" />
                   </button>
-                </td>
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                  Account Type
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                  <button
+                    onClick={() => handleSort('minimumBalance')}
+                    className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
+                  >
+                    <span>Min Balance</span>
+                    <SortIcon column="minimumBalance" />
+                  </button>
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                  Monthly Fee
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                  ATM Fees
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                  Card Fees
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                  Transfer Fees
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32 relative">
+                  <button
+                    onClick={() => handleSort('monthlyTotal')}
+                    className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
+                  >
+                    <span>Monthly Total</span>
+                    <SortIcon column="monthlyTotal" />
+                    <CalculationTooltip />
+                  </button>
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                  <button
+                    onClick={() => handleSort('yearlyTotal')}
+                    className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
+                  >
+                    <span>Yearly Total</span>
+                    <SortIcon column="yearlyTotal" />
+                  </button>
+                </th>
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {sortedBanks.map((bank, index) => (
+                <tr key={`${bank.bankId}-${bank.type}`} className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <CompareButton
+                      selectedBanks={selectedBanks}
+                      onCompare={handleCompare}
+                      onToggleSelect={handleToggleSelect}
+                      bankId={bank.bankId}
+                      isSelected={selectedBanks.includes(bank.bankId)}
+                    />
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Building2 className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div className="ml-3">
+                        <div className="text-sm font-medium text-gray-900 leading-tight">{bank.bankName}</div>
+                        <div className="text-xs text-gray-500">{bank.bankType}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                      {bank.type}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                    {formatCurrency(bank.minimumBalance)}
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                    {formatCurrency(bank.accountMaintenanceFee)}
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="space-y-1">
+                      <div className="text-xs">Own: <span className="font-medium">{formatCurrency(bank.atmFeeOwn)}</span></div>
+                      <div className="text-xs">Other: <span className="font-medium">{formatCurrency(bank.atmFeeOther)}</span></div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="space-y-1">
+                      <div className="text-xs">Debit: <span className="font-medium">{formatCurrency(bank.debitCardFee)}</span></div>
+                      <div className="text-xs">Credit: <span className="font-medium">{formatCurrency(bank.creditCardFee)}</span></div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="space-y-1">
+                      <div className="text-xs">NEFT: <span className="font-medium">{formatCurrency(bank.neftFee)}</span></div>
+                      <div className="text-xs">BEFTN: <span className="font-medium">{formatCurrency(bank.beftnFee)}</span></div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-lg font-bold text-green-600">
+                      {formatCurrency(bank.monthlyTotal)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="text-lg font-bold text-blue-600">
+                      {formatCurrency(bank.yearlyTotal)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleViewBank(bank.bankId)}
+                      className="flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      Details
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      {/* Scroll indicator for mobile */}
+      <div className="lg:hidden px-4 py-2 text-xs text-gray-500 text-center border-t border-gray-200">
+        ← Scroll horizontally to see all columns →
       </div>
     </div>
   );
