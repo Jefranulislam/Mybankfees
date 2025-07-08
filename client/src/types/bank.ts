@@ -1,13 +1,13 @@
 export interface BankCharge {
   id: string;
-  bank_name: string;
-  bank_type: BankType;
-  established_year?: number;
+  bankName: string;
+  bankType: BankType;
+  establishedYear?: number;
   headquarters?: string;
   website?: string;
-  total_branches?: number;
-  total_atms?: number;
-  account_types: AccountTypeDetails[];
+  totalBranches?: number;
+  totalAtms?: number;
+  accountTypes: AccountTypeDetails[];
   created_at?: string;
   updated_at?: string;
 }
