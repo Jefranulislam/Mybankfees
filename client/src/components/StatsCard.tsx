@@ -6,7 +6,7 @@ interface StatsCardProps {
   title: string;
   value: string;
   icon: LucideIcon;
-  color: 'blue' | 'green' | 'orange' | 'purple';
+  color: 'blue' | 'green' | 'orange' | 'purple' | 'indigo';
 }
 
 export const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon: Icon, color }) => {
@@ -15,10 +15,11 @@ export const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon: Icon, 
     green: 'bg-green-50 text-green-600 border-green-200',
     orange: 'bg-orange-50 text-orange-600 border-orange-200',
     purple: 'bg-purple-50 text-purple-600 border-purple-200',
+    indigo : 'bg-indigo-50 text-indigo-600 border-indigo-200',
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 flex items-center justify-between">
       <div className="flex items-center">
         <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
           <Icon className="w-6 h-6" />

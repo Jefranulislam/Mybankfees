@@ -124,7 +124,7 @@ export const ComparePage: React.FC = () => {
                         </div>
                         <div className="flex justify-between">
                           <span>Transfer Fee:</span>
-                          <span className="font-medium">{formatCurrency(account.neftFee)}</span>
+                          <span className="font-medium">{formatCurrency(account.nspbFee)}</span>
                         </div>
                       </div>
                       

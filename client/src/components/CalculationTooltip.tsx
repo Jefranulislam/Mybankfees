@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Info, X } from 'lucide-react';
 import { getCalculationBreakdown } from '../utils/calculations';
 
-export const CalculationTooltip: React.FC = () => {
+export const CalculationTooltip = () => {
   const [isOpen, setIsOpen] = useState(false);
   const breakdown = getCalculationBreakdown();
 

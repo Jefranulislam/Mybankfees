@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, Globe, MapPin, Calendar, Users, CreditCard, Calculator, Loader2 } from 'lucide-react';
 import { Header } from '../components/Header';
 import { bankService } from '../services/api';
-import { calculateCharges, calculateCustomCharges, formatCurrency, transformBankData } from '../utils/calculations';
-import { UserCalculation, BankCharge } from '../types/bank';
+import { calculateCharges, formatCurrency, transformBankData } from '../utils/calculations';
+import { BankCharge } from '../types/bank';
 
 export const BankDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,12 +14,22 @@ export const BankDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedAccountType, setSelectedAccountType] = useState<string>('');
-  const [userInputs, setUserInputs] = useState<UserCalculation>({
-    monthlyAtmTransactions: 4,
-    monthlyTransfers: 4,
+  
+  const [optionalFeatures, setOptionalFeatures] = useState({
+    includeCreditCard: false,
+    includeDebitCard: true,
+    includeOnlineBanking: true,
+    includeSms: true,
+    includeStatements: true,
+    includeCheckbook: false
+  });
+
+  const [transactionInputs, setTransactionInputs] = useState({
+    monthlyAtmOtherBank: 4,
+    monthlyNspbTransfers: 2,
+    monthlyBeftnTransfers: 2,
     monthlyStatements: 1,
-    useOnlineBanking: true,
-    useSms: true
+    monthlyCheckbooks: 0
   });
 
   useEffect(() => {
@@ -57,8 +67,53 @@ export const BankDetailsPage: React.FC = () => {
   
   const customCalculation = useMemo(() => {
     if (!selectedAccount) return null;
-    return calculateCustomCharges(selectedAccount, userInputs);
-  }, [selectedAccount, userInputs]);
+    
+    // Calculate custom charges based on user inputs and optional features
+    let customMonthlyTotal = 0;
+    
+    // Base charges (always included)
+    customMonthlyTotal += selectedAccount.accountMaintenanceFee || 0;
+    customMonthlyTotal += selectedAccount.minimumBalance || 0; // This might need adjustment based on your logic
+    
+    // Optional features
+    if (optionalFeatures.includeOnlineBanking) {
+      customMonthlyTotal += selectedAccount.onlineBankingFee || 0;
+    }
+    
+    if (optionalFeatures.includeSms) {
+      customMonthlyTotal += selectedAccount.smsBankingFee || 0;
+    }
+    
+    if (optionalFeatures.includeStatements) {
+      customMonthlyTotal += (selectedAccount.statementFee || 0) * transactionInputs.monthlyStatements;
+    }
+    
+    if (optionalFeatures.includeCheckbook) {
+      customMonthlyTotal += (selectedAccount.checkbookFee || 0) * transactionInputs.monthlyCheckbooks;
+    }
+    
+    // Transaction-based charges
+    customMonthlyTotal += (selectedAccount.atmFeeOther || 0) * transactionInputs.monthlyAtmOtherBank;
+    customMonthlyTotal += (selectedAccount.nspbFee || 0) * transactionInputs.monthlyNspbTransfers;
+    customMonthlyTotal += (selectedAccount.beftnFee || 0) * transactionInputs.monthlyBeftnTransfers;
+    
+    // Annual charges (divided by 12 for monthly calculation)
+    if (optionalFeatures.includeCreditCard) {
+      customMonthlyTotal += (selectedAccount.creditCardFee || 0) / 12;
+    }
+    
+    // Include debit card only if selected
+    if (optionalFeatures.includeDebitCard) {
+      customMonthlyTotal += (selectedAccount.debitCardFee || 0) / 12;
+    }
+    
+    const customYearlyTotal = customMonthlyTotal * 12;
+    
+    return {
+      customMonthlyTotal,
+      customYearlyTotal
+    };
+  }, [selectedAccount, optionalFeatures, transactionInputs]);
 
   if (loading) {
     return (
@@ -306,23 +361,7 @@ export const BankDetailsPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold">Standard Monthly Total:</span>
-                      <span className="text-2xl font-bold text-green-600">
-                        {formatCurrency(selectedAccount.monthlyTotal)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-lg font-semibold">Standard Yearly Total:</span>
-                      <span className="text-2xl font-bold text-blue-600">
-                        {formatCurrency(selectedAccount.yearlyTotal)}
-                      </span>
-                    </div>
-                  </div>
                 </div>
-
                 {/* Custom Calculator */}
                 <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
                   <div className="flex items-center mb-4">
@@ -332,120 +371,255 @@ export const BankDetailsPage: React.FC = () => {
                     </h2>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Transaction Inputs */}
                     <div className="space-y-4">
+                      <h3 className="font-medium text-gray-900 mb-3">Monthly Transactions</h3>
+                      
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Monthly ATM Transactions (Other Banks)
+                          ATM Transactions (Other Banks)
                         </label>
                         <input
                           type="number"
                           min="0"
-                          value={userInputs.monthlyAtmTransactions}
-                          onChange={(e) => setUserInputs(prev => ({
+                          value={transactionInputs.monthlyAtmOtherBank}
+                          onChange={(e) => setTransactionInputs(prev => ({
                             ...prev,
-                            monthlyAtmTransactions: Number(e.target.value)
+                            monthlyAtmOtherBank: Number(e.target.value)
                           }))}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Charge: {formatCurrency(selectedAccount.atmFeeOther)} per transaction
+                        </p>
                       </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Monthly Transfers (NSPB/BEFTN)
+                          NSPB Transfers
                         </label>
                         <input
                           type="number"
                           min="0"
-                          value={userInputs.monthlyTransfers}
-                          onChange={(e) => setUserInputs(prev => ({
+                          value={transactionInputs.monthlyNspbTransfers}
+                          onChange={(e) => setTransactionInputs(prev => ({
                             ...prev,
-                            monthlyTransfers: Number(e.target.value)
+                            monthlyNspbTransfers: Number(e.target.value)
                           }))}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Charge: {formatCurrency(selectedAccount.nspbFee)} per transfer
+                        </p>
                       </div>
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Monthly Statements
+                          BEFTN Transfers
                         </label>
                         <input
                           type="number"
                           min="0"
-                          value={userInputs.monthlyStatements}
-                          onChange={(e) => setUserInputs(prev => ({
+                          value={transactionInputs.monthlyBeftnTransfers}
+                          onChange={(e) => setTransactionInputs(prev => ({
                             ...prev,
-                            monthlyStatements: Number(e.target.value)
+                            monthlyBeftnTransfers: Number(e.target.value)
                           }))}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Charge: {formatCurrency(selectedAccount.beftnFee)} per transfer
+                        </p>
                       </div>
                     </div>
                     
+                    {/* Optional Services */}
                     <div className="space-y-4">
+                      <h3 className="font-medium text-gray-900 mb-3">Optional Services</h3>
+                      
                       <div>
                         <label className="flex items-center">
                           <input
                             type="checkbox"
-                            checked={userInputs.useOnlineBanking}
-                            onChange={(e) => setUserInputs(prev => ({
+                            checked={optionalFeatures.includeOnlineBanking}
+                            onChange={(e) => setOptionalFeatures(prev => ({
                               ...prev,
-                              useOnlineBanking: e.target.checked
+                              includeOnlineBanking: e.target.checked
                             }))}
                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                           />
                           <span className="ml-2 text-sm font-medium text-gray-700">
-                            Use Online Banking
+                            Online Banking
                           </span>
                         </label>
+                        <p className="text-xs text-gray-500 ml-6">
+                          Monthly: {formatCurrency(selectedAccount.onlineBankingFee)}
+                        </p>
                       </div>
                       
                       <div>
                         <label className="flex items-center">
                           <input
                             type="checkbox"
-                            checked={userInputs.useSms}
-                            onChange={(e) => setUserInputs(prev => ({
+                            checked={optionalFeatures.includeSms}
+                            onChange={(e) => setOptionalFeatures(prev => ({
                               ...prev,
-                              useSms: e.target.checked
+                              includeSms: e.target.checked
                             }))}
                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                           />
                           <span className="ml-2 text-sm font-medium text-gray-700">
-                            Use SMS Banking
+                            SMS Banking
                           </span>
                         </label>
+                        <p className="text-xs text-gray-500 ml-6">
+                          Monthly: {formatCurrency(selectedAccount.smsBankingFee)}
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={optionalFeatures.includeDebitCard}
+                            onChange={(e) => setOptionalFeatures(prev => ({
+                              ...prev,
+                              includeDebitCard: e.target.checked
+                            }))}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="ml-2 text-sm font-medium text-gray-700">
+                            Debit Card
+                          </span>
+                        </label>
+                        <p className="text-xs text-gray-500 ml-6">
+                          Annual: {formatCurrency(selectedAccount.debitCardFee)} (Monthly: {formatCurrency((selectedAccount.debitCardFee || 0) / 12)})
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={optionalFeatures.includeCreditCard}
+                            onChange={(e) => setOptionalFeatures(prev => ({
+                              ...prev,
+                              includeCreditCard: e.target.checked
+                            }))}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="ml-2 text-sm font-medium text-gray-700">
+                            Credit Card
+                          </span>
+                        </label>
+                        <p className="text-xs text-gray-500 ml-6">
+                          Annual: {formatCurrency(selectedAccount.creditCardFee)} (Monthly: {formatCurrency((selectedAccount.creditCardFee || 0) / 12)})
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Additional Services */}
+                    <div className="space-y-4">
+                      <h3 className="font-medium text-gray-900 mb-3">Additional Services</h3>
+                      
+                      <div>
+                        <label className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            checked={optionalFeatures.includeStatements}
+                            onChange={(e) => setOptionalFeatures(prev => ({
+                              ...prev,
+                              includeStatements: e.target.checked
+                            }))}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="ml-2 text-sm font-medium text-gray-700">
+                            Monthly Statements
+                          </span>
+                        </label>
+                        {optionalFeatures.includeStatements && (
+                          <div className="ml-6">
+                            <input
+                              type="number"
+                              min="0"
+                              value={transactionInputs.monthlyStatements}
+                              onChange={(e) => setTransactionInputs(prev => ({
+                                ...prev,
+                                monthlyStatements: Number(e.target.value)
+                              }))}
+                              className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <span className="ml-2 text-xs text-gray-500">
+                              {formatCurrency(selectedAccount.statementFee)} each
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <label className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            checked={optionalFeatures.includeCheckbook}
+                            onChange={(e) => setOptionalFeatures(prev => ({
+                              ...prev,
+                              includeCheckbook: e.target.checked
+                            }))}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="ml-2 text-sm font-medium text-gray-700">
+                            Checkbooks
+                          </span>
+                        </label>
+                        {optionalFeatures.includeCheckbook && (
+                          <div className="ml-6">
+                            <input
+                              type="number"
+                              min="0"
+                              value={transactionInputs.monthlyCheckbooks}
+                              onChange={(e) => setTransactionInputs(prev => ({
+                                ...prev,
+                                monthlyCheckbooks: Number(e.target.value)
+                              }))}
+                              className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <span className="ml-2 text-xs text-gray-500">
+                              {formatCurrency(selectedAccount.checkbookFee)} each
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="mt-4 p-3 bg-gray-50 rounded-md">
+                        <p className="text-xs text-gray-600">
+                          <strong>Note:</strong> Choose only the cards and services you actually use. 
+                          Account maintenance fee is always included in the base calculation.
+                        </p>
                       </div>
                     </div>
                   </div>
                   
                   {customCalculation && (
-                    <div className="mt-6 pt-6 border-t border-gray-200 bg-blue-50 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">Your Personalized Charges</h3>
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold">Your Monthly Total:</span>
-                        <span className="text-2xl font-bold text-green-600">
-                          {formatCurrency(customCalculation.customMonthlyTotal)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-lg font-semibold">Your Yearly Total:</span>
-                        <span className="text-2xl font-bold text-blue-600">
-                          {formatCurrency(customCalculation.customYearlyTotal)}
-                        </span>
-                      </div>
-                      
-                      <div className="mt-4 text-sm text-gray-600">
-                        <p>Difference from standard calculation:</p>
-                        <p className={`font-medium ${
-                          customCalculation.customMonthlyTotal < selectedAccount.monthlyTotal 
-                            ? 'text-green-600' 
-                            : 'text-red-600'
-                        }`}>
-                          Monthly: {customCalculation.customMonthlyTotal < selectedAccount.monthlyTotal ? '-' : '+'}
-                          {formatCurrency(Math.abs(customCalculation.customMonthlyTotal - selectedAccount.monthlyTotal))}
-                        </p>
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <div className="bg-blue-50 rounded-lg p-6">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Your Personalized Charges</h3>
+                        <div className="grid  gap-6">
+                          <div className="space-y-3 grid-end">
+                            <div className="flex justify-between items-center">
+                              <span className="text-lg font-medium">Your Monthly Total:</span>
+                              <span className="text-2xl font-bold text-green-600">
+                                {formatCurrency(customCalculation.customMonthlyTotal)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-lg font-medium">Your Yearly Total:</span>
+                              <span className="text-2xl font-bold text-blue-600">
+                                {formatCurrency(customCalculation.customYearlyTotal)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}

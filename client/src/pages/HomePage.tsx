@@ -9,7 +9,7 @@ import { bankService } from '../services/api';
 import { calculateCharges, formatCurrency, transformBankData } from '../utils/calculations';
 import { FilterOptions, CalculatedCharges, BankCharge } from '../types/bank';
 
-export const HomePage: React.FC = () => {
+export const HomePage : React.FC = () => {
   const [banks, setBanks] = useState<BankCharge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -165,73 +165,79 @@ Stop Guessing. Start Knowing Bank Fees <br/> from Every Bangladeshi Bank.       
             </div>
           </div>
         ) : (
-          <>
+            <>
             {/* Stats Cards */}
             <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <StatsCard
-                  title="Account Options"
-                  value={stats.totalBanks.toString()}
-                  icon={Building2}
-                  color="blue"
-                />
-                <StatsCard
-                  title="Avg Min Balance"
-                  value={formatCurrency(stats.avgMinBalance)}
-                  icon={Calculator}
-                  color="green"
-                />
-                <StatsCard
-                  title="Avg Monthly Fee"
-                  value={formatCurrency(stats.avgMonthlyFee)}
-                  icon={TrendingUp}
-                  color="orange"
-                />
-                <StatsCard
-                  title="Lowest Monthly Fee"
-                  value={formatCurrency(stats.lowestMonthlyFee)}
-                  icon={Users}
-                  color="purple"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+              <StatsCard
+                title="Bank Information"
+                value={banks.length.toString()}
+                icon={Building2}
+                color="indigo"
+              />
+              <StatsCard
+                title="Account Options"
+                value={stats.totalBanks.toString()}
+                icon={Building2}
+                color="blue"
+              />
+              <StatsCard
+                title="Avg Min Balance"
+                value={formatCurrency(stats.avgMinBalance)}
+                icon={Calculator}
+                color="green"
+              />
+              <StatsCard
+                title="Avg Monthly Fee"
+                value={formatCurrency(stats.avgMonthlyFee)}
+                icon={TrendingUp}
+                color="orange"
+              />
+              <StatsCard
+                title="Lowest Monthly Fee"
+                value={formatCurrency(stats.lowestMonthlyFee)}
+                icon={Users}
+                color="purple"
+              />
               </div>
 
-          {/* Filters */}
-          <div className="mb-8">
+            {/* Filters */}
+            <div className="mb-8">
             <FilterPanel
               filters={filters}
               onFiltersChange={setFilters}
               isOpen={isFilterOpen}
               onToggle={() => setIsFilterOpen(!isFilterOpen)}
             />
-          </div>
+            </div>
 
-          {/* Results */}
-          <div className="mb-4">
+            {/* Results */}
+            <div className="mb-4">
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Comparison Results
             </h2>
             <p className="text-gray-600">
               Showing {filteredBanks.length} of {calculatedBanks.length} bank accounts
             </p>
+            </div>
           </div>
-        </div>
 
-        {/* Table with full width */}
-        <div className="w-full">
-          <ComparisonTable banks={filteredBanks} />
-        </div>
+          {/* Table with full width */}
+          <div className="w-full">
+            <ComparisonTable banks={filteredBanks} />
+          </div>
 
-        {/* Footer */}
-        <div className="max-w-7xl mx-auto mt-12 text-center text-gray-500 text-sm">
-          <p>
+          {/* Footer */}
+          <div className="max-w-7xl mx-auto mt-12 text-center text-gray-500 text-sm">
+            <p>
             * Charges are based on typical usage patterns and may vary. 
             Monthly totals include estimated usage of ATM, transfer, and other services.
-          </p>
-          <p className="mt-2">
+            </p>
+            <p className="mt-2">
             Please verify current rates with respective banks before making decisions.
-          </p>
-        </div>
-          </>
+            </p>
+          </div>
+            </>
         )}
       </div>
     </div>
