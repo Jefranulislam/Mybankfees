@@ -56,21 +56,28 @@ export const calculateCharges = (
   bankType: string,
   accountType: AccountTypeDetails
 ): CalculatedCharges => {
-  // Standard calculation (assuming average usage)
-  const monthlyTotal = 
-    accountType.accountMaintenanceFee + 
-    (accountType.atmFeeOther * 4) + // 4 ATM transactions at other banks per month
-    accountType.onlineBankingFee +
-    accountType.smsBankingFee +
-    (accountType.debitCardFee / 12) + // Annual fee divided by 12
-    (accountType.creditCardFee / 12) + // Annual fee divided by 12
-    (accountType.nspbFee * 2) + // 2 NSPB transactions per month
-    (accountType.beftnFee * 2) + // 2 BEFTN transactions per month
-    (accountType.checkbookFee / 6) + // New checkbook every 6 months
-    (accountType.statementFee / 3) + // Statement every 3 months
-    accountType.otherCharges;
+  // Yearly calculation (proper banking fee structure)
+  
+  // Annual charges (charged once per year)
+  const annualCharges = 
+    accountType.accountMaintenanceFee + // Annual maintenance fee
+    accountType.onlineBankingFee + // Annual online banking fee
+    accountType.smsBankingFee + // Annual SMS banking fee
+    accountType.debitCardFee + // Annual debit card fee
+    accountType.creditCardFee + // Annual credit card fee
+    accountType.checkbookFee + // Annual checkbook fee (assuming 1 per year)
+    accountType.statementFee + // Annual statement fee (assuming 1 per year)
+    accountType.otherCharges; // Other annual charges
 
-  const yearlyTotal = monthlyTotal * 12;
+  // Monthly transaction-based charges (multiply by 12 for yearly)
+  const monthlyTransactionCharges = 
+    (accountType.atmFeeOther * 4) + // 4 ATM transactions at other banks per month
+    (accountType.nspbFee * 2) + // 2 NSPB transactions per month
+    (accountType.beftnFee * 2); // 2 BEFTN transactions per month
+
+  const yearlyTransactionCharges = monthlyTransactionCharges * 12;
+  const yearlyTotal = annualCharges + yearlyTransactionCharges;
+  const monthlyTotal = yearlyTotal / 12; // For display purposes
 
   return {
     ...accountType,
@@ -156,19 +163,24 @@ export const sortBanks = (banks: CalculatedCharges[], sortBy: string, sortOrder:
 
 export const getCalculationBreakdown = () => {
   return {
-    title: "Monthly Total Calculation",
-    description: "Our monthly total is calculated based on typical banking usage patterns:",
+    title: "Yearly Total Calculation",
+    description: "Our yearly total is calculated using proper banking fee structure:",
     items: [
-      "Account Maintenance Fee (monthly)",
-      "ATM Fees: 4 transactions at other banks",
-      "Online Banking Fee (if applicable)",
-      "SMS Banking Fee (monthly)",
-      "Debit Card Fee (annual ÷ 12)",
-      "Credit Card Fee (annual ÷ 12)",
-      "Transfer Fees: 2 NSPB + 2 BEFTN transactions",
-      "Checkbook Fee (every 6 months ÷ 6)",
-      "Statement Fee (quarterly ÷ 3)",
-      "Other Charges (monthly)"
+      "Annual Charges (charged once per year):",
+      "• Account Maintenance Fee (annual)",
+      "• Online Banking Fee (annual)",
+      "• SMS Banking Fee (annual)", 
+      "• Debit Card Fee (annual)",
+      "• Credit Card Fee (annual)",
+      "• Checkbook Fee (annual)",
+      "• Statement Fee (annual)",
+      "• Other Charges (annual)",
+      "",
+      "Transaction Charges (monthly × 12):",
+      "• ATM Fees: 4 transactions at other banks",
+      "• Transfer Fees: 2 NSPB + 2 BEFTN transactions",
+      "",
+      "Monthly Total = Yearly Total ÷ 12"
     ],
     note: "You can customize these calculations on individual bank pages based on your actual usage."
   };

@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Building2, Calculator, TrendingUp, Users, Loader2, AlertCircle } from 'lucide-react';
-import { Header } from '../components/Header';
 import { SearchBar } from '../components/SearchBar';
 import { FilterPanel } from '../components/FilterPanel';
 import { ComparisonTable } from '../components/ComparisonTable';
@@ -9,7 +8,7 @@ import { bankService } from '../services/api';
 import { calculateCharges, formatCurrency, transformBankData } from '../utils/calculations';
 import { FilterOptions, CalculatedCharges, BankCharge } from '../types/bank';
 
-export const HomePage : React.FC = () => {
+export const HomePage: React.FC = () => {
   const [banks, setBanks] = useState<BankCharge[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +40,7 @@ export const HomePage : React.FC = () => {
 
   const calculatedBanks = useMemo(() => {
     const allCalculated: CalculatedCharges[] = [];
-    
+
     banks.forEach(bank => {
       // Add defensive check to ensure accountTypes exists and is an array
       if (bank.accountTypes && Array.isArray(bank.accountTypes)) {
@@ -51,7 +50,7 @@ export const HomePage : React.FC = () => {
         });
       }
     });
-    
+
     return allCalculated;
   }, [banks]);
 
@@ -88,14 +87,14 @@ export const HomePage : React.FC = () => {
 
   const stats = useMemo(() => {
     const totalBanks = filteredBanks.length;
-    const avgMinBalance = totalBanks > 0 
-      ? filteredBanks.reduce((sum, bank) => sum + bank.minimumBalance, 0) / totalBanks 
+    const avgMinBalance = totalBanks > 0
+      ? filteredBanks.reduce((sum, bank) => sum + bank.minimumBalance, 0) / totalBanks
       : 0;
-    const avgMonthlyFee = totalBanks > 0 
-      ? filteredBanks.reduce((sum, bank) => sum + bank.monthlyTotal, 0) / totalBanks 
+    const avgMonthlyFee = totalBanks > 0
+      ? filteredBanks.reduce((sum, bank) => sum + bank.monthlyTotal, 0) / totalBanks
       : 0;
-    const lowestMonthlyFee = totalBanks > 0 
-      ? Math.min(...filteredBanks.map(bank => bank.monthlyTotal)) 
+    const lowestMonthlyFee = totalBanks > 0
+      ? Math.min(...filteredBanks.map(bank => bank.monthlyTotal))
       : 0;
 
     return {
@@ -112,21 +111,20 @@ export const HomePage : React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
 
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-Stop Guessing. Start Knowing Bank Fees <br/> from Every Bangladeshi Bank.            </h1>
-            <p className="text-xl text-blue-100 p-2 max-w-3xl mx-auto">
-"আপনার টাকা কোথায় কাটছে, জানেন তো?"
+          <div className="text-center grid justify-between gap-2 md:gap-2 flex-row md:flex-col items-center">
+            <h1 className="text-4xl md:text-5xl font-bold">
+              Stop Guessing. Start Knowing Bank Fees <br /> from Every Bangladeshi Bank.            </h1>
+            <p className="text-xl text-blue-100 max-w-3xl">
+              "আপনার টাকা কোথায় কাটছে, জানেন তো?"
             </p>
-            <p className="text-xl text-blue-100 p-2 max-w-3xl mx-auto">
-"MyBankFees সব ব্যাংকের চার্জ, এক জায়গায়।"
+            <p className="text-xl text-blue-100 max-w-3xl">
+              "MyBankFees সব ব্যাংকের চার্জ, এক জায়গায়।"
             </p>
-            
+
             <SearchBar
               searchTerm={filters.searchTerm}
               onSearchChange={handleSearchChange}
@@ -165,79 +163,70 @@ Stop Guessing. Start Knowing Bank Fees <br/> from Every Bangladeshi Bank.       
             </div>
           </div>
         ) : (
-            <>
+          <>
             {/* Stats Cards */}
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-              <StatsCard
-                title="Bank Information"
-                value={banks.length.toString()}
-                icon={Building2}
-                color="indigo"
-              />
-              <StatsCard
-                title="Account Options"
-                value={stats.totalBanks.toString()}
-                icon={Building2}
-                color="blue"
-              />
-              <StatsCard
-                title="Avg Min Balance"
-                value={formatCurrency(stats.avgMinBalance)}
-                icon={Calculator}
-                color="green"
-              />
-              <StatsCard
-                title="Avg Monthly Fee"
-                value={formatCurrency(stats.avgMonthlyFee)}
-                icon={TrendingUp}
-                color="orange"
-              />
-              <StatsCard
-                title="Lowest Monthly Fee"
-                value={formatCurrency(stats.lowestMonthlyFee)}
-                icon={Users}
-                color="purple"
-              />
+                <StatsCard
+                  title="Bank Information"
+                  value={banks.length.toString()}
+                  icon={Building2}
+                  color="indigo"
+                />
+                <StatsCard
+                  title="Account Options"
+                  value={stats.totalBanks.toString()}
+                  icon={Building2}
+                  color="blue"
+                />
+                <StatsCard
+                  title="Avg Min Balance"
+                  value={formatCurrency(stats.avgMinBalance)}
+                  icon={Calculator}
+                  color="green"
+                />
+                <StatsCard
+                  title="Avg Monthly Fee"
+                  value={formatCurrency(stats.avgMonthlyFee)}
+                  icon={TrendingUp}
+                  color="orange"
+                />
+                <StatsCard
+                  title="Lowest Monthly Fee"
+                  value={formatCurrency(stats.lowestMonthlyFee)}
+                  icon={Users}
+                  color="purple"
+                />
               </div>
 
-            {/* Filters */}
-            <div className="mb-8">
-            <FilterPanel
-              filters={filters}
-              onFiltersChange={setFilters}
-              isOpen={isFilterOpen}
-              onToggle={() => setIsFilterOpen(!isFilterOpen)}
-            />
+              {/* Filters */}
+              <div className="mb-8">
+                <FilterPanel
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  isOpen={isFilterOpen}
+                  onToggle={() => setIsFilterOpen(!isFilterOpen)}
+                />
+              </div>
+
+              {/* Results */}
+              <div className="mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  Comparison Results
+                </h2>
+                <p className="text-gray-600">
+                  Showing {filteredBanks.length} of {calculatedBanks.length} bank accounts
+                </p>
+              </div>
             </div>
 
-            {/* Results */}
-            <div className="mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Comparison Results
-            </h2>
-            <p className="text-gray-600">
-              Showing {filteredBanks.length} of {calculatedBanks.length} bank accounts
-            </p>
+            {/* Table with full width */}
+            <div className="w-full">
+              <ComparisonTable banks={filteredBanks} />
             </div>
-          </div>
 
-          {/* Table with full width */}
-          <div className="w-full">
-            <ComparisonTable banks={filteredBanks} />
-          </div>
-
-          {/* Footer */}
-          <div className="max-w-7xl mx-auto mt-12 text-center text-gray-500 text-sm">
-            <p>
-            * Charges are based on typical usage patterns and may vary. 
-            Monthly totals include estimated usage of ATM, transfer, and other services.
-            </p>
-            <p className="mt-2">
-            Please verify current rates with respective banks before making decisions.
-            </p>
-          </div>
-            </>
+   
+          </>
         )}
       </div>
     </div>

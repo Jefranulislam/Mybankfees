@@ -28,7 +28,7 @@ export const ComparePage: React.FC = () => {
   if (comparisonData.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
+        {/* <Header /> */}
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -70,7 +70,7 @@ export const ComparePage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {comparisonData.map((data, index) => (
+          {comparisonData.map((data) => (
             <div key={data!.bank.id} className="bg-white rounded-lg shadow-md border border-gray-200">
               {/* Bank Header */}
               <div className="p-6 border-b border-gray-200">

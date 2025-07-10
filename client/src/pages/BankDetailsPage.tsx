@@ -69,45 +69,47 @@ export const BankDetailsPage: React.FC = () => {
     if (!selectedAccount) return null;
     
     // Calculate custom charges based on user inputs and optional features
-    let customMonthlyTotal = 0;
+    // Annual charges (charged once per year)
+    let annualCharges = 0;
     
     // Base charges (always included)
-    customMonthlyTotal += selectedAccount.accountMaintenanceFee || 0;
-    customMonthlyTotal += selectedAccount.minimumBalance || 0; // This might need adjustment based on your logic
+    annualCharges += selectedAccount.accountMaintenanceFee || 0;
     
-    // Optional features
+    // Optional annual services
     if (optionalFeatures.includeOnlineBanking) {
-      customMonthlyTotal += selectedAccount.onlineBankingFee || 0;
+      annualCharges += selectedAccount.onlineBankingFee || 0;
     }
     
     if (optionalFeatures.includeSms) {
-      customMonthlyTotal += selectedAccount.smsBankingFee || 0;
+      annualCharges += selectedAccount.smsBankingFee || 0;
     }
     
     if (optionalFeatures.includeStatements) {
-      customMonthlyTotal += (selectedAccount.statementFee || 0) * transactionInputs.monthlyStatements;
+      annualCharges += (selectedAccount.statementFee || 0) * transactionInputs.monthlyStatements;
     }
     
     if (optionalFeatures.includeCheckbook) {
-      customMonthlyTotal += (selectedAccount.checkbookFee || 0) * transactionInputs.monthlyCheckbooks;
+      annualCharges += (selectedAccount.checkbookFee || 0) * transactionInputs.monthlyCheckbooks;
     }
     
-    // Transaction-based charges
-    customMonthlyTotal += (selectedAccount.atmFeeOther || 0) * transactionInputs.monthlyAtmOtherBank;
-    customMonthlyTotal += (selectedAccount.nspbFee || 0) * transactionInputs.monthlyNspbTransfers;
-    customMonthlyTotal += (selectedAccount.beftnFee || 0) * transactionInputs.monthlyBeftnTransfers;
-    
-    // Annual charges (divided by 12 for monthly calculation)
+    // Annual card charges
     if (optionalFeatures.includeCreditCard) {
-      customMonthlyTotal += (selectedAccount.creditCardFee || 0) / 12;
+      annualCharges += selectedAccount.creditCardFee || 0;
     }
     
-    // Include debit card only if selected
     if (optionalFeatures.includeDebitCard) {
-      customMonthlyTotal += (selectedAccount.debitCardFee || 0) / 12;
+      annualCharges += selectedAccount.debitCardFee || 0;
     }
     
-    const customYearlyTotal = customMonthlyTotal * 12;
+    // Monthly transaction-based charges (multiply by 12 for yearly)
+    const monthlyTransactionCharges = 
+      (selectedAccount.atmFeeOther || 0) * transactionInputs.monthlyAtmOtherBank +
+      (selectedAccount.nspbFee || 0) * transactionInputs.monthlyNspbTransfers +
+      (selectedAccount.beftnFee || 0) * transactionInputs.monthlyBeftnTransfers;
+    
+    const yearlyTransactionCharges = monthlyTransactionCharges * 12;
+    const customYearlyTotal = annualCharges + yearlyTransactionCharges;
+    const customMonthlyTotal = customYearlyTotal / 12;
     
     return {
       customMonthlyTotal,

@@ -38,6 +38,17 @@ export const Header: React.FC = () => {
             >
               Compare
             </Link>
+            <Link
+              to="/changelog"
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === '/changelog' 
+                  ? 'text-blue-600' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Changelog
+            </Link>
+
             {/* <Link
               to="/admin"
               className={`flex items-center space-x-1 text-sm font-medium transition-colors ${

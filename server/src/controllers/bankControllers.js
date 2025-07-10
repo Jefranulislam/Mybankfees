@@ -1,5 +1,9 @@
 import { sql } from '../config/db.js';
 
+
+
+
+
 export const getallBanks = async (req, res) => {
   try {
     const banks = await sql`
@@ -156,3 +160,5 @@ export const getBankById = async (req, res) => {
     });
   }
 }
+
+
