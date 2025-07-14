@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://mybankfeesapi.vercel.app/';
+// Use production URL since we're deploying to Vercel
+const API_BASE_URL = 'https://mybankfeesapi.vercel.app';
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -26,7 +27,7 @@ apiClient.interceptors.response.use(
     } else if (error.request) {
       // Request made but no response received
       console.error('Network Error - No response received:', error.request);
-      throw new Error('Network Error: Unable to connect to server. Make sure the server is running on http://localhost:3000');
+      throw new Error('Network Error: Unable to connect to server. Please check your internet connection.');
     } else {
       // Something else happened
       console.error('Request setup error:', error.message);
@@ -106,7 +107,8 @@ export const bankService = {
   async getAllBanks(): Promise<ApiBank[]> {
     try {
       const response = await apiClient.get('/api/banks');
-      return response.data.data;
+      // Updated to match the new API response format
+      return response.data.banks || response.data.data || response.data;
     } catch (error) {
       console.error('Error fetching banks:', error);
       throw error;
@@ -134,4 +136,38 @@ export const bankService = {
       throw error;
     }
   },
+};
+
+// Report service for handling user reports
+export const reportService = {
+  async submitReport(reportData: {
+    wrongInfo: string;
+    bankName: string;
+    accountType: string;
+    url?: string;
+  }) {
+    try {
+      const response = await apiClient.post('/api/report-issue', {
+        ...reportData,
+        url: reportData.url || window.location.href
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      throw error;
+    }
+  }
+};
+
+// Visitor service
+export const visitorService = {
+  async getVisitorCount() {
+    try {
+      const response = await apiClient.get('/api/visitor-count');
+      return response.data;
+    } catch (error) {
+      console.error('Error getting visitor count:', error);
+      throw error;
+    }
+  }
 };
