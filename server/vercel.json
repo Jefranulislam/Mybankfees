@@ -1,22 +1,9 @@
 {
   "version": 2,
-  "functions": {
-    "src/server.js": {
-      "runtime": "@vercel/node@3.0.0",
-      "maxDuration": 30
-    }
-  },
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/src/server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/src/server.js"
+      "dest": "/api"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
