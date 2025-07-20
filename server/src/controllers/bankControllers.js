@@ -40,7 +40,7 @@ export const getallBanks = async (req, res) => {
 
     res.status(200).json({
       message: "Banks retrieved successfully",
-      data: banks
+      banks: banks
     });
   } catch (error) {
     console.error('Error fetching banks:', error);
@@ -150,7 +150,7 @@ export const getBankById = async (req, res) => {
 
     res.status(200).json({
       message: "Bank retrieved successfully",
-      data: bank[0]
+      bank: bank[0]
     });
   } catch (error) {
     console.error('Error fetching bank:', error);
