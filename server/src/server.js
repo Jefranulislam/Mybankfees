@@ -19,16 +19,31 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:5173', // Local development (original)
   'http://localhost:5174', // Local development (backup port)
+  'http://localhost:3000', // Common React port
   'https://your-vercel-app.vercel.app', // Replace with your actual Vercel frontend URL
   process.env.FRONTEND_URL // Add this to your .env file
 ].filter(Boolean);
 
-app.use(cors({
-  origin: allowedOrigins,
+// More permissive CORS for development
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost on any port for development
+    if (origin.includes('localhost') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // Reject other origins
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Add a simple health check endpoint
 app.get('/api/health', (req, res) => {
