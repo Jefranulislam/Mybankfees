@@ -5120,10 +5120,9 @@ const bankData = [
     }
   ]
 }
-  ];
- 
+];
 
-  /** 
+/* COMMENTED OUT DUPLICATE DATA
 const bankData = 
 [
   {
