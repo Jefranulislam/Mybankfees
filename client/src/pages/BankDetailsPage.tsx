@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building2, Globe, MapPin, Calendar, Users, CreditCard, Calculator, Loader2 } from 'lucide-react';
-import { Header } from '../components/Header';
 import { bankService } from '../services/api';
 import { calculateCharges, formatCurrency, transformBankData } from '../utils/calculations';
 import { BankCharge } from '../types/bank';
@@ -38,8 +37,11 @@ export const BankDetailsPage: React.FC = () => {
       
       try {
         setLoading(true);
+        console.log('Fetching bank with ID:', id);
         const apiBank = await bankService.getBankById(id);
+        console.log('API Response:', apiBank);
         const transformedBank = transformBankData(apiBank);
+        console.log('Transformed Bank:', transformedBank);
         setBank(transformedBank);
         
         // Set the first account type as default
@@ -47,6 +49,7 @@ export const BankDetailsPage: React.FC = () => {
           setSelectedAccountType(transformedBank.accountTypes[0].type);
         }
       } catch (err) {
+        console.error('Error fetching bank:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch bank data');
       } finally {
         setLoading(false);
@@ -120,7 +123,6 @@ export const BankDetailsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <Loader2 className="w-16 h-16 text-blue-600 mx-auto mb-4 animate-spin" />
@@ -135,7 +137,6 @@ export const BankDetailsPage: React.FC = () => {
   if (error || !bank) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -159,7 +160,6 @@ export const BankDetailsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       
       {/* Bank Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">

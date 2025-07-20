@@ -4,6 +4,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
+    "build": "echo 'No build step required'",
     "dev": "nodemon src/server.js",
     "seed": "node src/runSeed.js",
     "reset-db": "node src/resetDatabase.js"

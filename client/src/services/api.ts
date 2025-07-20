@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3001';
+
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('process.env:', process.env);
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -26,7 +29,7 @@ apiClient.interceptors.response.use(
     } else if (error.request) {
       // Request made but no response received
       console.error('Network Error - No response received:', error.request);
-      throw new Error('Network Error: Unable to connect to server. Make sure the server is running on http://localhost:3000');
+      throw new Error(`Network Error: Unable to connect to server. Make sure the server is running on ${API_BASE_URL}`);
     } else {
       // Something else happened
       console.error('Request setup error:', error.message);
@@ -116,7 +119,12 @@ export const bankService = {
   // Get bank by ID
   async getBankById(id: string): Promise<ApiBank> {
     try {
+      console.log('API_BASE_URL:', API_BASE_URL);
+      console.log('Fetching bank with ID:', id);
+      console.log('Full URL:', `${API_BASE_URL}/api/banks/${id}`);
       const response = await apiClient.get(`/api/banks/${id}`);
+      console.log('Raw API Response:', response);
+      console.log('Response data:', response.data);
       return response.data.data;
     } catch (error) {
       console.error('Error fetching bank:', error);

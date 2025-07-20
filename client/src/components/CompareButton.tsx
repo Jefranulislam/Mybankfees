@@ -17,16 +17,15 @@ export const CompareButton: React.FC<CompareButtonProps> = ({
   isSelected
 }) => {
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-2 justify-center">
       <label className="flex items-center">
         <input
           type="checkbox"
           checked={isSelected}
           onChange={() => onToggleSelect(bankId)}
-          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="rounded border-gray-300  text-blue-600 focus:ring-blue-500"
           disabled={!isSelected && selectedBanks.length >= 3}
         />
-        <span className="ml-2 text-sm text-gray-600">Compare</span>
       </label>
       
       {selectedBanks.length >= 2 && (

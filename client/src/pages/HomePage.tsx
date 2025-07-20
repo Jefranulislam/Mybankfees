@@ -114,10 +114,10 @@ export const HomePage: React.FC = () => {
 
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center grid justify-between gap-2 md:gap-2 flex-row md:flex-col items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid justify-items-center">
+          <div className="text-center grid gap-2 md:gap-2 flex-row md:flex-col w-full justify-items-center">
             <h1 className="text-4xl md:text-5xl font-bold">
-              Stop Guessing. Start Knowing Bank Fees <br /> from Every Bangladeshi Bank.            </h1>
+              Stop Guessing. Start Knowing Bank Fees <br /> from Every Bangladeshi Bank. </h1>
             <p className="text-xl text-blue-100 max-w-3xl">
               "আপনার টাকা কোথায় কাটছে, জানেন তো?"
             </p>
@@ -221,7 +221,7 @@ export const HomePage: React.FC = () => {
             </div>
 
             {/* Table with full width */}
-            <div className="w-full">
+            <div className="size-fit mx-auto">
               <ComparisonTable banks={filteredBanks} />
             </div>
 

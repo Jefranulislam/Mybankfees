@@ -61,17 +61,16 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ banks }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 size-fit">
       {/* Table container with proper overflow handling */}
-      <div className="">
-        <div className="min-w-[1400px]"> {/* Ensure minimum width for all content */}
-          <table className="w-full">
+      <div className="min-w-fit">
+          <table className="min-w-fit">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                   Compare
                 </th>
-                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48">
+                <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-48 ">
                   <button
                     onClick={() => handleSort('bankName')}
                     className="flex items-center space-x-1 hover:text-gray-700 transition-colors"
@@ -140,13 +139,13 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ banks }) => {
                       isSelected={selectedBanks.includes(bank.bankId)}
                     />
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap overflow-hidden">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                         <Building2 className="w-4 h-4 text-blue-600" />
                       </div>
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900 leading-tight">{bank.bankName}</div>
+                        <div className="text-sm w-16 font-medium text-gray-900 leading-tight">{bank.bankName}</div>
                         <div className="text-xs text-gray-500">{bank.bankType}</div>
                       </div>
                     </div>
@@ -203,7 +202,6 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ banks }) => {
               ))}
             </tbody>
           </table>
-        </div>
       </div>
       
       {/* Scroll indicator for mobile */}
