@@ -6,6 +6,10 @@ import { sql } from '../config/db.js';
 
 export const getallBanks = async (req, res) => {
   try {
+    // First, let's count total banks
+    const countResult = await sql`SELECT COUNT(*) as total FROM banks`;
+    console.log('Total banks in database:', countResult[0].total);
+    
     const banks = await sql`
       SELECT 
         b.*,
@@ -38,9 +42,12 @@ export const getallBanks = async (req, res) => {
       ORDER BY b.bank_name
     `;
 
+    console.log('Banks returned from query:', banks.length);
+
     res.status(200).json({
       message: "Banks retrieved successfully",
-      banks: banks
+      banks: banks,
+      totalCount: countResult[0].total
     });
   } catch (error) {
     console.error('Error fetching banks:', error);
