@@ -17,7 +17,8 @@ app.use(express.json());
 
 // Configure CORS for production and development
 const allowedOrigins = [
-  'http://localhost:5173', // Local development
+  'http://localhost:5173', // Local development (original)
+  'http://localhost:5174', // Local development (backup port)
   'https://your-vercel-app.vercel.app', // Replace with your actual Vercel frontend URL
   process.env.FRONTEND_URL // Add this to your .env file
 ].filter(Boolean);
