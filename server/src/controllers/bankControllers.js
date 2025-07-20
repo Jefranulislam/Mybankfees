@@ -13,26 +13,33 @@ export const getallBanks = async (req, res) => {
     const banks = await sql`
       SELECT 
         b.*,
-        json_agg(
-          json_build_object(
-            'id', at.id,
-            'type', at.account_type,
-            'minimumBalance', at.minimum_balance,
-            'accountMaintenanceFee', at.account_maintenance_fee,
-            'atmFeeOwn', at.atm_fee_own,
-            'atmFeeOther', at.atm_fee_other,
-            'onlineBankingFee', at.online_banking_fee,
-            'smsBankingFee', at.sms_banking_fee,
-            'debitCardFee', at.debit_card_fee,
-            'creditCardFee', at.credit_card_fee,
-            'nspbFee', at.nspb_fee,
-            'rtgsFee', at.rtgs_fee,
-            'beftnFee', at.beftn_fee,
-            'checkbookFee', at.checkbook_fee,
-            'statementFee', at.statement_fee,
-            'otherCharges', at.other_charges,
-            'interestRate', at.interest_rate
-          )
+        COALESCE(
+          json_agg(
+            CASE 
+              WHEN at.id IS NOT NULL THEN 
+                json_build_object(
+                  'id', at.id,
+                  'type', at.account_type,
+                  'minimumBalance', at.minimum_balance,
+                  'accountMaintenanceFee', at.account_maintenance_fee,
+                  'atmFeeOwn', at.atm_fee_own,
+                  'atmFeeOther', at.atm_fee_other,
+                  'onlineBankingFee', at.online_banking_fee,
+                  'smsBankingFee', at.sms_banking_fee,
+                  'debitCardFee', at.debit_card_fee,
+                  'creditCardFee', at.credit_card_fee,
+                  'nspbFee', at.nspb_fee,
+                  'rtgsFee', at.rtgs_fee,
+                  'beftnFee', at.beftn_fee,
+                  'checkbookFee', at.checkbook_fee,
+                  'statementFee', at.statement_fee,
+                  'otherCharges', at.other_charges,
+                  'interestRate', at.interest_rate
+                )
+              ELSE NULL
+            END
+          ) FILTER (WHERE at.id IS NOT NULL), 
+          '[]'::json
         ) as account_types
       FROM banks b
       LEFT JOIN account_types at ON b.id = at.bank_id
@@ -47,7 +54,7 @@ export const getallBanks = async (req, res) => {
     res.status(200).json({
       message: "Banks retrieved successfully",
       banks: banks,
-      totalCount: countResult[0].total
+      totalCount: parseInt(countResult[0].total)
     });
   } catch (error) {
     console.error('Error fetching banks:', error);
