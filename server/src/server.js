@@ -15,35 +15,13 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Configure CORS for production and development
-const allowedOrigins = [
-  'http://localhost:5173', // Local development (original)
-  'http://localhost:5174', // Local development (backup port)
-  'http://localhost:3000', // Common React port
-  'https://your-vercel-app.vercel.app', // Replace with your actual Vercel frontend URL
-  process.env.FRONTEND_URL // Add this to your .env file
-].filter(Boolean);
-
-// More permissive CORS for development
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Allow localhost on any port for development
-    if (origin.includes('localhost') || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    // Reject other origins
-    callback(new Error('Not allowed by CORS'));
-  },
+// Configure CORS - Allow all origins for development
+app.use(cors({
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-};
-
-app.use(cors(corsOptions));
+}));
 
 // Add a simple health check endpoint
 app.get('/api/health', (req, res) => {
