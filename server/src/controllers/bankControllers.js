@@ -120,6 +120,7 @@ export const addBank = async (req, res) => {
 export const getBankById = async (req, res) => {
   try {
     const bankId = req.params.id;
+    console.log(`[${new Date().toISOString()}] Fetching bank with ID: ${bankId}`);
     
     const bank = await sql`
       SELECT 
@@ -152,6 +153,8 @@ export const getBankById = async (req, res) => {
                b.headquarters, b.website, b.total_branches, b.total_atms,
                b.created_at, b.updated_at
     `;
+
+    console.log(`[${new Date().toISOString()}] Query result for ${bankId}:`, bank.length, 'banks found');
 
     if (bank.length === 0) {
       return res.status(404).json({
