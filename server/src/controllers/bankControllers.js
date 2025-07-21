@@ -6,28 +6,7 @@ import { sql } from '../config/db.js';
 
 export const getallBanks = async (req, res) => {
   try {
-    // First, let's get all banks without JOIN to see if that's the issue
-    const allBanks = await sql`SELECT * FROM banks ORDER BY bank_name`;
-    console.log('Total banks in database:', allBanks.length);
-    
-    // If we have more than 10 banks, then the issue is with the JOIN
-    if (allBanks.length > 10) {
-      console.log('The issue is with the JOIN query, returning all banks without account_types first');
-      
-      // Map banks to include empty account_types array for now
-      const banksWithEmptyAccountTypes = allBanks.map(bank => ({
-        ...bank,
-        account_types: []
-      }));
-      
-      return res.status(200).json({
-        message: "Banks retrieved successfully (temporary fix - all banks, no account types)",
-        banks: banksWithEmptyAccountTypes,
-        totalCount: allBanks.length
-      });
-    }
-    
-    // Original query with JOIN
+    // Get all banks and their account types
     const banks = await sql`
       SELECT 
         b.*,
@@ -67,12 +46,12 @@ export const getallBanks = async (req, res) => {
       ORDER BY b.bank_name
     `;
 
-    console.log('Banks returned from JOIN query:', banks.length);
+    console.log('Banks returned from query:', banks.length);
 
     res.status(200).json({
       message: "Banks retrieved successfully",
       banks: banks,
-      totalCount: allBanks.length
+      totalCount: banks.length
     });
   } catch (error) {
     console.error('Error fetching banks:', error);
